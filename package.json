@@ -1,0 +1,23 @@
+{
+  "name": "electron-protocol-provider",
+  "version": "0.0.1",
+  "author": "ntoskrnl7@gmail.com",
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "electron": "^33.2.1"
+  },
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "README.md"
+  ],
+  "esm": {
+    "cjs": true
+  }
+}
