@@ -179,7 +179,8 @@ export class ProtocolRouter<C = undefined> {
         this.#handler = async request => {
             let lastError = null;
             try {
-                const pathname = request.url.split(':/')[1];
+                const url = new URL(request.url);
+                const pathParts = `/${url.host}${url.pathname}`.split('/');
                 const requestMethod = request.method.toUpperCase() as unknown as HttpMethod;
 
                 const entries = Object.entries(this.#routes);
@@ -190,7 +191,6 @@ export class ProtocolRouter<C = undefined> {
                     for (const [path, handlers] of entry) {
                         try {
                             const routeParts = path.split('/');
-                            const pathParts = pathname.split('/');
                             if (routeParts.length !== pathParts.length) continue;
 
                             const params: Record<string, string> = {};
