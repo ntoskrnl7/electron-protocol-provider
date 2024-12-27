@@ -210,7 +210,7 @@ export class ProtocolRouter<C = undefined> {
                                 for (const handler of handlers) {
                                     try {
                                         if (contextBuilder === undefined) {
-                                            return handler({ request, params });
+                                            return await handler({ request, params });
                                         } else {
                                             let context = null;
                                             try {
@@ -220,13 +220,13 @@ export class ProtocolRouter<C = undefined> {
                                                     return error;
                                                 } else {
                                                     if (handler.length < 2) {
-                                                        return handler({ request, params });
+                                                        return await handler({ request, params });
                                                     }
                                                     lastError = error;
                                                     continue;
                                                 }
                                             }
-                                            return handler({ request, params }, context);
+                                            return await handler({ request, params }, context);
                                         }
                                     } catch (error) {
                                         lastError = error;
