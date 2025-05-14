@@ -10,7 +10,7 @@ export { ProtocolRouter };
  * It ensures the schemes are registered as privileged and their handlers are applied to new sessions.
  */
 export class ProtocolProvider<C> {
-    #schemeRouters = new Array<{
+    readonly #schemeRouters = new Array<{
         customScheme: CustomScheme;
         router: () => ProtocolRouter<any>;
     }>();

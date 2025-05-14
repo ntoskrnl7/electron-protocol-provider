@@ -12,11 +12,7 @@ enum HttpMethod {
     CONNECT = 'CONNECT'
 }
 
-type ProtocolHandler<Path extends string, C = undefined> =
-    C extends undefined ?
-    (request: { request: Request; params: ExtractParams<Path> }) => Response | Promise<Response>
-    :
-    (request: { request: Request; params: ExtractParams<Path> }, context?: C) => Response | Promise<Response>;
+type ProtocolHandler<Path extends string, C> = (request: { request: Request; params: ExtractParams<Path> }, context?: C) => Response | Promise<Response>;
 
 /**
  * Interface for a protocol router that handles various HTTP methods.
@@ -27,7 +23,7 @@ type ProtocolHandler<Path extends string, C = undefined> =
  *
  * All methods support method chaining by returning `this`.
  */
-export interface ProtocolRouter<C = undefined> {
+export interface ProtocolRouter<C> {
     /**
      * Registers a handler for GET requests to the specified path.
      *
@@ -158,10 +154,10 @@ export interface ProtocolRouter<C = undefined> {
 /**
  * A class for conveniently handling requests for custom protocols.
  */
-export class ProtocolRouter<C = undefined> {
+export class ProtocolRouter<C> {
 
-    #routes: { [key in HttpMethod | '*']?: Map<string, [ProtocolHandler<string, C>]> } = {};
-    #handler: (request: Request) => (Response) | (Promise<Response>);
+    readonly #routes: { [key in HttpMethod | '*']?: Map<string, [ProtocolHandler<string, C>]> } = {};
+    readonly #handler: (request: Request) => (Response) | (Promise<Response>);
 
     /**
      * Initializes a new instance of `ProtocolRouter`.
@@ -212,7 +208,7 @@ export class ProtocolRouter<C = undefined> {
                                         if (contextBuilder === undefined) {
                                             return await handler({ request, params });
                                         } else {
-                                            let context = null;
+                                            let context: C | undefined = undefined;
                                             try {
                                                 context = await contextBuilder(request);
                                             } catch (error) {
