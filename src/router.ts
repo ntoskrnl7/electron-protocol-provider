@@ -12,7 +12,7 @@ enum HttpMethod {
     CONNECT = 'CONNECT'
 }
 
-type ProtocolHandler<Path extends string, C> = (request: { request: Request; params: ExtractParams<Path> }, context?: C) => Response | Promise<Response>;
+type ProtocolHandler<Path extends string, C> = (request: { request: Request; params: ExtractParams<Path> }, context: C) => Response | Promise<Response>;
 
 /**
  * Interface for a protocol router that handles various HTTP methods.
@@ -206,7 +206,7 @@ export class ProtocolRouter<C> {
                                 for (const handler of handlers) {
                                     try {
                                         if (contextBuilder === undefined) {
-                                            return await handler({ request, params });
+                                            return await handler({ request, params }, undefined as C);
                                         } else {
                                             let context: C | undefined = undefined;
                                             try {
@@ -216,7 +216,7 @@ export class ProtocolRouter<C> {
                                                     return error;
                                                 } else {
                                                     if (handler.length < 2) {
-                                                        return await handler({ request, params });
+                                                        return await handler({ request, params }, undefined as C);
                                                     }
                                                     lastError = error;
                                                     continue;
