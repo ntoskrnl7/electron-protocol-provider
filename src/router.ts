@@ -186,20 +186,27 @@ export class ProtocolRouter<C> {
                     }
                     for (const [path, handlers] of entry) {
                         try {
-                            const routeParts = path.split('/');
-                            if (routeParts.length !== pathParts.length) continue;
-
-                            const params: Record<string, string> = {};
                             let matched = true;
+                            const params: Record<string, string> = {};
 
-                            for (let i = 0; i < routeParts.length; i++) {
-                                const routePart = routeParts[i];
-                                const pathPart = pathParts[i];
-                                if (routePart.startsWith(':')) {
-                                    params[routePart.slice(1)] = decodeURIComponent(pathPart);
-                                } else if (routePart !== pathPart) {
-                                    matched = false;
-                                    break;
+                            if (path.endsWith('/*')) {
+                                const baseRoute = path.slice(0, -2);
+                                if (!`/${url.host}${url.pathname}`.startsWith(baseRoute)) {
+                                    continue;
+                                }
+                            } else {
+                                const routeParts = path.split('/');
+                                if (routeParts.length !== pathParts.length) continue;
+
+                                for (let i = 0; i < routeParts.length; i++) {
+                                    const routePart = routeParts[i];
+                                    const pathPart = pathParts[i];
+                                    if (routePart.startsWith(':')) {
+                                        params[routePart.slice(1)] = decodeURIComponent(pathPart);
+                                    } else if (routePart !== pathPart) {
+                                        matched = false;
+                                        break;
+                                    }
                                 }
                             }
                             if (matched) {
